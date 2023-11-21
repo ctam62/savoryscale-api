@@ -8,6 +8,7 @@
     "dev": "node --watch server.js",
     "start": "node server.js",
     "migrate": "npx knex migrate:latest",
+    "migrate:down": "npx knex migrate:down",
     "migrate:rollback": "npx knex migrate:rollback",
     "seed": "npx knex seed"
   },
