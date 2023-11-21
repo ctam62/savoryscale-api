@@ -4,7 +4,7 @@ exports.up = function (knex) {
         table.string('title').notNullable();
         table.string('ingredients').notNullable();
         table.string('instructions').notNullable();
-        table.string('cost').nullable();
+        table.float('cost').nullable();
     });
 };
 
