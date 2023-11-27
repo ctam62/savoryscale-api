@@ -16,8 +16,8 @@ exports.up = function (knex) {
                 .onDelete('CASCADE');
             table.string('title').notNullable();
             table.string('ingredients').notNullable();
-            table.string('instructions').notNullable();
-            table.string('cost').nullable();
+            table.string('analyzedInstructions').notNullable();
+            table.string('price').nullable();
             table.timestamp('created_at').defaultTo(knex.fn.now());
             table
                 .timestamp('updated_at')
