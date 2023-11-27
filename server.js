@@ -9,12 +9,16 @@ app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.use(express.static("./public"));
 
+
+const mealTypeRoutes = require("./routes/meal-type-routes");
+app.use("/api/mealtypes", mealTypeRoutes);
+
 const recipeRoutes = require("./routes/recipe-routes");
-app.use("./api/recipes", recipeRoutes);
+app.use("/api/recipes", recipeRoutes);
 
 const userRoutes = require("./routes/user-routes");
-app.use("./api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}}`)
+    console.log(`Listening on port ${PORT}`);
 });
