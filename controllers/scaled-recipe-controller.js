@@ -1,29 +1,29 @@
 const knex = require("knex")(require("../knexfile"));
 
-const getAllRecipes = async (_req, res) => {
+const getAllScaledRecipes = async (_req, res) => {
     try {
-        const recipes = await knex('recipe');
+        const recipes = await knex('scaled_recipe');
         res.status(200).json(recipes);
     } catch (error) {
-        res.status(500).json({ error: `Error getting recipes: ${error}` });
+        res.status(500).json({ error: `Error getting scaled recipes: ${error}` });
     }
 };
 
-const getRecipeById = async (req, res) => {
-    const recipeId = req.params.id;
+const getScaledRecipeById = async (req, res) => {
+    const scaledRecipeId = req.params.id;
 
     try {
-        const recipe = await knex('recipe').where('id', recipeId).first();
-        if (!recipe) {
-            return res.status(404).json({ message: `recipe with ID ${recipeId} not found.` });
+        const scaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId).first();
+        if (!scaledRecipe) {
+            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
         }
-        res.status(200).json(recipe);
+        res.status(200).json(scaledRecipe);
     } catch (error) {
-        res.status(500).json({ error: `Error getting recipe: ${error}` });
+        res.status(500).json({ error: `Error getting scaled recipe: ${error}` });
     }
 };
 
-const createRecipe = async (req, res) => {
+const createScaledRecipe = async (req, res) => {
     const {
         recipe_id,
         user_id,
@@ -59,7 +59,7 @@ const createRecipe = async (req, res) => {
     }
 
     try {
-        const [recipeId] = await knex('recipe')
+        const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
                 user_id,
                 recipe_id,
@@ -91,31 +91,31 @@ const createRecipe = async (req, res) => {
                 equipment
             }, ['id']);
 
-        const newRecipe = await knex('recipe').where('id', recipeId.id);
+        const newScaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId.id);
 
-        res.status(201).json(newRecipe);
+        res.status(201).json(newScaledRecipe);
     } catch (error) {
-        res.status(500).json({ error: `Error creating recipe: ${error}` });
+        res.status(500).json({ error: `Error adding scaled recipe: ${error}` });
     }
 };
 
-const delelteRecipe = async (req, res) => {
-    const recipeId = req.params.id;
+const delelteScaledRecipe = async (req, res) => {
+    const scaledRecipeId = req.params.id;
 
     try {
-        const deletedRows = await knex('recipe').where('id', recipeId).del();
+        const deletedRows = await knex('scaled_recipe').where('id', scaledRecipeId).del();
         if (deletedRows === 0) {
-            return res.status(404).json({ message: `Recipe with ID ${recipeId} not found.` });
+            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: `Error deleting recipe: ${error}` });
+        res.status(500).json({ error: `Error deleting scaled recipe: ${error}` });
     }
 };
 
 module.exports = {
-    getAllRecipes,
-    getRecipeById,
-    createRecipe,
-    delelteRecipe
+    getAllScaledRecipes,
+    getScaledRecipeById,
+    createScaledRecipe,
+    delelteScaledRecipe
 };
