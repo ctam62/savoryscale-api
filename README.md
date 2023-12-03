@@ -3,9 +3,10 @@
 This is the backend API of [SavoryScale](https://github.com/ctam62/savoryscale).
 
 ## Backend Tech Stack
-- ExpressJS 
+- Express.js
+- Node.js
 - Knex
-- MySQL2
+- PostgreSQL
 
 ## Setup
 Install nodeJS dependencies
@@ -13,10 +14,10 @@ Install nodeJS dependencies
 npm i
 ```
 
-Create and select the database in a separate mysql terminal
+Create and select the savoryscale database in a separate psql terminal
 ```
 CREATE DATABASE savoryscale;
-USE savoryscale;
+\c savoryscale;
 ```
 
 Create database tables with knex migrations
