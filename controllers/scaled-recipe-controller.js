@@ -25,7 +25,7 @@ const getScaledRecipeById = async (req, res) => {
 
 const createScaledRecipe = async (req, res) => {
     const {
-        id,
+        recipe_id,
         user_id,
         title,
         summary,
@@ -62,7 +62,7 @@ const createScaledRecipe = async (req, res) => {
         const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
                 user_id,
-                recipe_id: id,
+                recipe_id,
                 title,
                 summary,
                 vegetarian,
@@ -89,9 +89,9 @@ const createScaledRecipe = async (req, res) => {
                 ingredients,
                 total_cost: totalCost,
                 equipment
-            });
+            }, ['id']);
 
-        const newScaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId).first();
+        const newScaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId.id);
 
         res.status(201).json(newScaledRecipe);
     } catch (error) {

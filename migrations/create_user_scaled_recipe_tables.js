@@ -33,7 +33,7 @@ exports.up = function (knex) {
             table.integer('ready_in_minutes').notNullable();
             table.integer('orig_servings').notNullable();
             table.integer('servings').notNullable();
-            table.float('price_per_serving').nullable();
+            table.float('price_per_serving').notNullable();
             table.specificType('analyzed_instructions', 'jsonb ARRAY').notNullable();
             table.specificType('cuisines', 'text ARRAY').notNullable();
             table.specificType('dish_types', 'text ARRAY').notNullable();
