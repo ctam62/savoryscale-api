@@ -5,27 +5,28 @@ const getAllScaledRecipes = async (_req, res) => {
         const recipes = await knex('scaled_recipe');
         res.status(200).json(recipes);
     } catch (error) {
-        res.status(500).json({ error: `Error getting users: ${error}` });
+        res.status(500).json({ error: `Error getting scaled recipes: ${error}` });
     }
 };
 
 const getScaledRecipeById = async (req, res) => {
-    const recipeId = req.params.id;
+    const scaledRecipeId = req.params.id;
 
     try {
-        const recipe = await knex('scaled_recipe').where('id', recipeId).first();
-        if (!recipe) {
-            return res.status(404).json({ message: `recipe with ID ${recipeId} not found.` });
+        const scaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId).first();
+        if (!scaledRecipe) {
+            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
         }
-        res.status(200).json(recipe);
+        res.status(200).json(scaledRecipe);
     } catch (error) {
-        res.status(500).json({ error: `Error getting recipe: ${error}` });
+        res.status(500).json({ error: `Error getting scaled recipe: ${error}` });
     }
 };
 
 const createScaledRecipe = async (req, res) => {
     const {
         id,
+        user_id,
         title,
         summary,
         vegetarian,
@@ -51,16 +52,16 @@ const createScaledRecipe = async (req, res) => {
         ingredients,
         totalCost,
         equipment
-
     } = req.body;
 
     if (!title) {
-        return res.status(400).json({ error: "Recipe title is required" });
+        return res.status(400).json({ error: "Recipe title is required." });
     }
 
     try {
         const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
+                user_id,
                 recipe_id: id,
                 title,
                 summary,
@@ -84,7 +85,7 @@ const createScaledRecipe = async (req, res) => {
                 dish_types: dishTypes,
                 diets,
                 nutrients: nutrition.nutrients,
-                weight_per_serving: JSON.stringify(nutrition.weightPerServing),
+                weight_per_serving: nutrition.weightPerServing,
                 ingredients,
                 total_cost: totalCost,
                 equipment
@@ -94,7 +95,7 @@ const createScaledRecipe = async (req, res) => {
 
         res.status(201).json(newScaledRecipe);
     } catch (error) {
-        res.status(500).json({ error: `Error creating recipe: ${error}` });
+        res.status(500).json({ error: `Error adding scaled recipe: ${error}` });
     }
 };
 
