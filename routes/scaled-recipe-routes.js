@@ -8,6 +8,7 @@ router
 
 router
     .route('/:id')
-    .get(scaledRecipeController.getScaledRecipeById);
+    .get(scaledRecipeController.getScaledRecipeById)
+    .delete(scaledRecipeController.delelteScaledRecipe);
 
 module.exports = router;

@@ -99,8 +99,23 @@ const createScaledRecipe = async (req, res) => {
     }
 };
 
+const delelteScaledRecipe = async (req, res) => {
+    const scaledRecipeId = req.params.id;
+
+    try {
+        const deletedRows = await knex('scaled_recipe').where('id', scaledRecipeId).del();
+        if (deletedRows === 0) {
+            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
+        }
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: `Error deleting scaled recipe: ${error}` });
+    }
+};
+
 module.exports = {
     getAllScaledRecipes,
     getScaledRecipeById,
-    createScaledRecipe
+    createScaledRecipe,
+    delelteScaledRecipe
 };
