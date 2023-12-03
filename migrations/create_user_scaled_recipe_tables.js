@@ -6,7 +6,7 @@ exports.up = function (knex) {
             table.increments('id').primary();
             table.string('username').notNullable();
             table.string('password_token').notNullable();
-            table.string('profile_img').defaultTo('../public/user_imgs/justice-scale1.svg');
+            table.string('profile_img').defaultTo('/user_imgs/justice-scale1.svg');
         })
         .createTable('scaled_recipe', (table) => {
             table.increments('id').primary();
@@ -18,7 +18,7 @@ exports.up = function (knex) {
                 .onDelete('CASCADE');
             table.integer('recipe_id').notNullable();
             table.string('title').notNullable();
-            table.string('summary').notNullable();
+            table.text('summary').notNullable();
             table.boolean('vegetarian').notNullable();
             table.boolean('vegan').notNullable();
             table.boolean('gluten_free').notNullable();
@@ -44,6 +44,7 @@ exports.up = function (knex) {
             table.float('total_cost').notNullable();
             table.specificType('equipment', 'jsonb ARRAY').notNullable();
             table.timestamp('created_at').defaultTo(knex.fn.now());
+            table.timestamp('updated_at').defaultTo(knex.fn.now());
         })
         .raw(onUpdateTimestampFunction)
         .then(() => knex.raw(onUpdateTrigger('scaled_recipe')));
