@@ -4,11 +4,12 @@ const scaledRecipeController = require("../controllers/scaled-recipe-controller"
 router
     .route('/')
     .get(scaledRecipeController.getAllScaledRecipes)
-    .post(scaledRecipeController.createScaledRecipe);
+    .post(scaledRecipeController.createScaledRecipe)
+    .delete(scaledRecipeController.deleteAllRecipes);
 
 router
     .route('/:id')
     .get(scaledRecipeController.getScaledRecipeById)
-    .delete(scaledRecipeController.delelteScaledRecipe);
+    .delete(scaledRecipeController.deleteScaledRecipe);
 
 module.exports = router;

@@ -99,7 +99,7 @@ const createRecipe = async (req, res) => {
     }
 };
 
-const delelteRecipe = async (req, res) => {
+const deleteRecipe = async (req, res) => {
     const recipeId = req.params.id;
 
     try {
@@ -117,5 +117,5 @@ module.exports = {
     getAllRecipes,
     getRecipeById,
     createRecipe,
-    delelteRecipe
+    deleteRecipe
 };

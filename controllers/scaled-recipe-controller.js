@@ -116,9 +116,19 @@ const deleteScaledRecipe = async (req, res) => {
     }
 };
 
+const deleteAllRecipes = async (_req, res) => {
+    try {
+        await knex('scaled_recipe').del();
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: `Error deleting scaled recipes: ${error}` })
+    }
+};
+
 module.exports = {
     getAllScaledRecipes,
     getScaledRecipeById,
     createScaledRecipe,
-    delelteScaledRecipe
+    deleteScaledRecipe,
+    deleteAllRecipes
 };

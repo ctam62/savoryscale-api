@@ -9,6 +9,6 @@ router
 router
     .route('/:id')
     .get(recipeController.getRecipeById)
-    .delete(recipeController.delelteRecipe);
+    .delete(recipeController.deleteRecipe);
 
 module.exports = router;
