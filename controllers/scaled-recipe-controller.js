@@ -86,8 +86,7 @@ const createScaledRecipe = async (req, res) => {
                 cuisines,
                 dish_types: dishTypes,
                 diets,
-                nutrients: nutrition.nutrients,
-                weight_per_serving: nutrition.weightPerServing,
+                nutrition: nutrition,
                 ingredients,
                 total_cost: totalCost,
                 equipment

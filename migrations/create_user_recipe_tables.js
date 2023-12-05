@@ -38,8 +38,7 @@ exports.up = function (knex) {
             table.specificType('cuisines', 'text ARRAY').notNullable();
             table.specificType('dish_types', 'text ARRAY').notNullable();
             table.specificType('diets', 'text ARRAY').notNullable();
-            table.specificType('nutrients', 'jsonb ARRAY').notNullable();
-            table.jsonb('weight_per_serving').notNullable();
+            table.jsonb('nutrition').notNullable();
             table.specificType('ingredients', 'jsonb ARRAY').notNullable();
             table.float('total_cost').notNullable();
             table.specificType('equipment', 'jsonb ARRAY').notNullable();
@@ -68,13 +67,14 @@ exports.up = function (knex) {
             table.integer('orig_servings').notNullable();
             table.integer('servings').notNullable();
             table.float('price_per_serving').notNullable();
-            table.specificType('analyzed_instructions', 'text ARRAY').notNullable();
+            table.specificType('analyzed_instructions', 'jsonb ARRAY').notNullable();
             table.specificType('cuisines', 'text ARRAY').notNullable();
             table.specificType('dish_types', 'text ARRAY').notNullable();
             table.specificType('diets', 'text ARRAY').notNullable();
-            table.specificType('nutrients', 'text ARRAY').notNullable();
-            table.specificType('ingredients', 'text ARRAY').notNullable();
-            table.specificType('equipment', 'text ARRAY').notNullable();
+            table.jsonb('nutrition').notNullable();
+            table.specificType('ingredients', 'jsonb  ARRAY').notNullable();
+            table.float('total_cost').notNullable();
+            table.specificType('equipment', 'jsonb  ARRAY').notNullable();
             table.timestamp('created_at').defaultTo(knex.fn.now());
             table.timestamp('updated_at').defaultTo(knex.fn.now());
         })
