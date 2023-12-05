@@ -3,10 +3,12 @@ const recipeController = require("../controllers/recipe-controller");
 
 router
     .route('/')
-    .get(recipeController.getAllRecipes);
+    .get(recipeController.getAllRecipes)
+    .post(recipeController.createRecipe);
 
 router
     .route('/:id')
-    .get(recipeController.getRecipeById);
+    .get(recipeController.getRecipeById)
+    .delete(recipeController.deleteRecipe);
 
 module.exports = router;
