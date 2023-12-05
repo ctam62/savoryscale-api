@@ -1,9 +1,11 @@
 const knex = require("knex")(require("../knexfile"));
+const jcc = require('json-case-convertor');
 
 const getAllScaledRecipes = async (_req, res) => {
     try {
-        const recipes = await knex('scaled_recipe');
-        res.status(200).json(recipes);
+        const scaledRecipes = await knex('scaled_recipe');
+        const { created_at, updated_at, ...recipesData } = { ...scaledRecipes };
+        res.status(200).json(jcc.camelCaseKeys(Object.values(recipesData)));
     } catch (error) {
         res.status(500).json({ error: `Error getting scaled recipes: ${error}` });
     }
@@ -17,7 +19,8 @@ const getScaledRecipeById = async (req, res) => {
         if (!scaledRecipe) {
             return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
         }
-        res.status(200).json(scaledRecipe);
+        const { created_at, updated_at, ...recipeData } = { ...scaledRecipe };
+        res.status(200).json(jcc.camelCaseKeys(recipeData));
     } catch (error) {
         res.status(500).json({ error: `Error getting scaled recipe: ${error}` });
     }
@@ -25,8 +28,7 @@ const getScaledRecipeById = async (req, res) => {
 
 const createScaledRecipe = async (req, res) => {
     const {
-        recipe_id,
-        user_id,
+        id,
         title,
         summary,
         vegetarian,
@@ -61,8 +63,8 @@ const createScaledRecipe = async (req, res) => {
     try {
         const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
-                user_id,
-                recipe_id,
+                user_id: 1,
+                recipe_id: id,
                 title,
                 summary,
                 vegetarian,
@@ -84,8 +86,7 @@ const createScaledRecipe = async (req, res) => {
                 cuisines,
                 dish_types: dishTypes,
                 diets,
-                nutrients: nutrition.nutrients,
-                weight_per_serving: nutrition.weightPerServing,
+                nutrition: nutrition,
                 ingredients,
                 total_cost: totalCost,
                 equipment
@@ -93,13 +94,14 @@ const createScaledRecipe = async (req, res) => {
 
         const newScaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId.id);
 
-        res.status(201).json(newScaledRecipe);
+        const { created_at, updated_at, ...newRecipeData } = { ...newScaledRecipe };
+        res.status(201).json(jcc.camelCaseKeys(Object.values(newRecipeData)));
     } catch (error) {
         res.status(500).json({ error: `Error adding scaled recipe: ${error}` });
     }
 };
 
-const delelteScaledRecipe = async (req, res) => {
+const deleteScaledRecipe = async (req, res) => {
     const scaledRecipeId = req.params.id;
 
     try {
@@ -113,9 +115,19 @@ const delelteScaledRecipe = async (req, res) => {
     }
 };
 
+const deleteAllRecipes = async (_req, res) => {
+    try {
+        await knex('scaled_recipe').del();
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: `Error deleting scaled recipes: ${error}` })
+    }
+};
+
 module.exports = {
     getAllScaledRecipes,
     getScaledRecipeById,
     createScaledRecipe,
-    delelteScaledRecipe
+    deleteScaledRecipe,
+    deleteAllRecipes
 };
