@@ -1,5 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
-const jcc = require('json-case-convertor');
+const jcc = require("json-case-convertor");
 
 const getAllScaledRecipes = async (_req, res) => {
     try {
@@ -28,7 +28,7 @@ const getScaledRecipeById = async (req, res) => {
 
 const createScaledRecipe = async (req, res) => {
     const {
-        id,
+        recipeId,
         title,
         summary,
         vegetarian,
@@ -64,7 +64,7 @@ const createScaledRecipe = async (req, res) => {
         const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
                 user_id: 1,
-                recipe_id: id,
+                recipe_id: recipeId,
                 title,
                 summary,
                 vegetarian,
