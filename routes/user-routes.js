@@ -3,10 +3,20 @@ const userController = require('../controllers/user-controller');
 
 router
     .route('/')
-    .get(userController.getAllUsers);
+    .get(userController.getAllUsers)
 
 router
-    .route('/:id')
-    .get(userController.getUserById);
+    .route('/register')
+    .post(userController.createUser);
+
+router
+    .route('/login')
+    .post(userController.loginUser);
+
+router
+    .route('/current')
+    .get(userController.getCurrentUser)
+    .put(userController.updateUser)
+    .delete(userController.deleteUser);
 
 module.exports = router;
