@@ -1,5 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 const jcc = require("json-case-convertor");
+const { handleError, handleNotFound, handleBadRequest } = require("../utils/errorHandlers");
+
 
 const getAllScaledRecipes = async (_req, res) => {
     try {
@@ -7,7 +9,7 @@ const getAllScaledRecipes = async (_req, res) => {
         const { created_at, updated_at, ...recipesData } = { ...scaledRecipes };
         res.status(200).json(jcc.camelCaseKeys(Object.values(recipesData)));
     } catch (error) {
-        res.status(500).json({ error: `Error getting scaled recipes: ${error}` });
+        handleError(res, `Error getting scaled recipes: ${error}`);
     }
 };
 
@@ -17,12 +19,12 @@ const getScaledRecipeById = async (req, res) => {
     try {
         const scaledRecipe = await knex('scaled_recipe').where('id', scaledRecipeId).first();
         if (!scaledRecipe) {
-            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
+            return handleNotFound(res, `Scaled recipe with ID ${scaledRecipeId} not found.`);
         }
         const { created_at, updated_at, ...recipeData } = { ...scaledRecipe };
         res.status(200).json(jcc.camelCaseKeys(recipeData));
     } catch (error) {
-        res.status(500).json({ error: `Error getting scaled recipe: ${error}` });
+        handleError(res, `Error getting scaled recipe: ${error}`);
     }
 };
 
@@ -57,7 +59,7 @@ const createScaledRecipe = async (req, res) => {
     } = req.body;
 
     if (!title) {
-        return res.status(400).json({ error: "Recipe title is required." });
+        return handleBadRequest(res, "Recipe title is required.");
     }
 
     try {
@@ -97,7 +99,7 @@ const createScaledRecipe = async (req, res) => {
         const { created_at, updated_at, ...newRecipeData } = { ...newScaledRecipe };
         res.status(201).json(jcc.camelCaseKeys(Object.values(newRecipeData)));
     } catch (error) {
-        res.status(500).json({ error: `Error adding scaled recipe: ${error}` });
+        handleError(res, `Error adding scaled recipe: ${error}`);
     }
 };
 
@@ -107,11 +109,11 @@ const deleteScaledRecipe = async (req, res) => {
     try {
         const deletedRows = await knex('scaled_recipe').where('id', scaledRecipeId).del();
         if (deletedRows === 0) {
-            return res.status(404).json({ message: `Scaled recipe with ID ${scaledRecipeId} not found.` });
+            return handleNotFound(res, `Scaled recipe with ID ${scaledRecipeId} not found.`);
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: `Error deleting scaled recipe: ${error}` });
+        handleError(res, `Error deleting scaled recipe: ${error}`);
     }
 };
 
@@ -120,7 +122,7 @@ const deleteAllRecipes = async (_req, res) => {
         await knex('scaled_recipe').del();
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: `Error deleting scaled recipes: ${error}` })
+        handleError(res, `Error deleting scaled recipes: ${error}`);
     }
 };
 

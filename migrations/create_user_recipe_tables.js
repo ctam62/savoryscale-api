@@ -1,7 +1,7 @@
-const userTable = require('../table-schemas/user-table');
-const recipeTable = require('../table-schemas/recipe-table');
-const shoppingTable = require('../table-schemas/shopping-table');
-const { onUpdateTrigger, onUpdateTimestampFunction } = require('../knexfile');
+const userTable = require("../table-schemas/user-table");
+const recipeTable = require("../table-schemas/recipe-table");
+const shoppingTable = require("../table-schemas/shopping-table");
+const { onUpdateTrigger, onUpdateTimestampFunction } = require("../knexfile");
 
 
 exports.up = function (knex) {

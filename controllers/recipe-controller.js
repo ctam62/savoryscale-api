@@ -1,11 +1,13 @@
 const knex = require("knex")(require("../knexfile"));
+const { handleError, handleNotFound, handleBadRequest } = require("../utils/errorHandlers");
+
 
 const getAllRecipes = async (_req, res) => {
     try {
         const recipes = await knex('recipe');
         res.status(200).json(recipes);
     } catch (error) {
-        res.status(500).json({ error: `Error getting recipes: ${error}` });
+        handleError(res, `Error getting recipes: ${error}`);
     }
 };
 
@@ -15,11 +17,11 @@ const getRecipeById = async (req, res) => {
     try {
         const recipe = await knex('recipe').where('id', recipeId).first();
         if (!recipe) {
-            return res.status(404).json({ message: `recipe with ID ${recipeId} not found.` });
+            return handleNotFound(res, `Recipe with ID ${recipeId} not found.`);
         }
         res.status(200).json(recipe);
     } catch (error) {
-        res.status(500).json({ error: `Error getting recipe: ${error}` });
+        handleError(res, `Error getting recipe: ${error}`);
     }
 };
 
@@ -55,7 +57,7 @@ const createRecipe = async (req, res) => {
     } = req.body;
 
     if (!title) {
-        return res.status(400).json({ error: "Recipe title is required." });
+        return handleBadRequest(res, "Recipe title is required.");
     }
 
     try {
@@ -95,7 +97,7 @@ const createRecipe = async (req, res) => {
 
         res.status(201).json(newRecipe);
     } catch (error) {
-        res.status(500).json({ error: `Error creating recipe: ${error}` });
+        handleBadRequest(`Error creating recipe: ${error}`);
     }
 };
 
@@ -105,11 +107,11 @@ const deleteRecipe = async (req, res) => {
     try {
         const deletedRows = await knex('recipe').where('id', recipeId).del();
         if (deletedRows === 0) {
-            return res.status(404).json({ message: `Recipe with ID ${recipeId} not found.` });
+            return handleNotFound(res, `Recipe with ID ${recipeId} not found.`);
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: `Error deleting recipe: ${error}` });
+        handleError(res, `Error deleting recipe: ${error}`);
     }
 };
 
