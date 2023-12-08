@@ -1,3 +1,4 @@
+require("dotenv").config();
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -8,7 +9,7 @@ const saltRounds = 10;
 const getAllUsers = async (_req, res) => {
     try {
         const users = await knex('user');
-        res.status(200).json(users)
+        res.status(200).json(users);
     } catch (error) {
         handleError(error, res, `Error getting users: ${error}`);
     }
@@ -115,11 +116,103 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getUserSavedRecipes = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
+        const user = await knex('user').where({ email: decoded.email }).first();
+
+        if (user === 0) {
+            return handleNotFound(res, `User not found.`);
+        }
+
+        const savedRecipes = await knex('saved_recipe').where({ user_id: user.id }).first();
+
+        res.status(200).json(savedRecipes);
+    } catch (error) {
+        return handleError(res, `Error getting user saved recipes: ${error}`);
+    }
+
+};
+
+const getUserScaledRecipes = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
+        const user = await knex('user').where({ email: decoded.email }).first();
+
+        if (user === 0) {
+            return handleNotFound(res, `User not found.`);
+        }
+
+        const scaledRecipes = await knex('scaled_recipe').where({ user_id: user.id }).first();
+
+        res.status(200).json(scaledRecipes);
+    } catch (error) {
+        return handleError(res, `Error getting user scaled recipes: ${error}`);
+    }
+
+};
+
+const getUserShoppingList = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
+        const user = await knex('user').where({ email: decoded.email }).first();
+
+        if (user === 0) {
+            return handleNotFound(res, `User not found.`);
+        }
+
+        const shoppingList = await knex('shopping').where({ user_id: user.id }).first();
+
+        res.status(200).json(shoppingList);
+    } catch (error) {
+        return handleError(res, `Error getting user shopping lsit: ${error}`);
+    }
+
+};
+
+const getUserRecipes = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
+        const user = await knex('user').where({ email: decoded.email }).first();
+
+        if (user === 0) {
+            return handleNotFound(res, `User not found.`);
+        }
+
+        const recipes = await knex('recipe').where({ user_id: user.id }).first();
+
+        res.status(200).json(recipes);
+    } catch (error) {
+        return handleError(res, `Error getting user recipes: ${error}`);
+    }
+};
+
+
 module.exports = {
     getAllUsers,
     createUser,
     loginUser,
     getCurrentUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserSavedRecipes,
+    getUserScaledRecipes,
+    getUserShoppingList,
+    getUserRecipes
 };

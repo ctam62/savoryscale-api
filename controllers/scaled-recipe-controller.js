@@ -30,6 +30,7 @@ const getScaledRecipeById = async (req, res) => {
 
 const createScaledRecipe = async (req, res) => {
     const {
+        userId,
         recipeId,
         title,
         summary,
@@ -65,7 +66,7 @@ const createScaledRecipe = async (req, res) => {
     try {
         const [scaledRecipeId] = await knex('scaled_recipe')
             .insert({
-                user_id: 1,
+                user_id: userId,
                 recipe_id: recipeId,
                 title,
                 summary,

@@ -16,5 +16,10 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-    return knex.schema.dropTable('scaled_recipe').dropTable('recipe').dropTable('user');
+    return knex.schema
+        .dropTable('shopping')
+        .dropTable('recipe')
+        .dropTable('scaled_recipe')
+        .dropTable('saved_recipe')
+        .dropTable('user');
 };

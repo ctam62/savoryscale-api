@@ -1,3 +1,5 @@
+const knex = require("knex")(require("../knexfile"));
+
 module.exports = (table) => {
     table.increments('id').primary();
     table
