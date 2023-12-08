@@ -36,7 +36,6 @@
     "json-case-convertor": "^1.4.4",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.0.1",
-    "mysql2": "^3.6.3",
     "pg": "^8.11.3"
   }
 }
