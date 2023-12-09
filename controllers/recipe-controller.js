@@ -1,11 +1,17 @@
 const knex = require("knex")(require("../knexfile"));
+const jcc = require("json-case-convertor");
 const { handleError, handleNotFound, handleBadRequest } = require("../utils/errorHandlers");
+const { validateRecipeInput } = require("../utils/validation");
 
 
-const getAllRecipes = async (_req, res) => {
+const getAllRecipes = async (req, res) => {
+
+    const table = req.params.table;
+
     try {
-        const recipes = await knex('recipe');
-        res.status(200).json(recipes);
+        const recipes = await knex(table);
+        const { created_at, updated_at, ...recipesData } = { ...recipes };
+        res.status(200).json(jcc.camelCaseKeys(Object.values(recipesData)));
     } catch (error) {
         handleError(res, `Error getting recipes: ${error}`);
     }
@@ -13,22 +19,26 @@ const getAllRecipes = async (_req, res) => {
 
 const getRecipeById = async (req, res) => {
     const recipeId = req.params.id;
+    const table = req.params.table;
 
     try {
-        const recipe = await knex('recipe').where('id', recipeId).first();
+        const recipe = await knex(table).where('id', recipeId).first();
         if (!recipe) {
             return handleNotFound(res, `Recipe with ID ${recipeId} not found.`);
         }
-        res.status(200).json(recipe);
+        const { created_at, updated_at, ...recipeData } = { ...recipe };
+        res.status(200).json(jcc.camelCaseKeys(recipeData));
     } catch (error) {
         handleError(res, `Error getting recipe: ${error}`);
     }
 };
 
 const createRecipe = async (req, res) => {
+    const table = req.params.table;
+
     const {
-        recipe_id,
-        user_id,
+        userId,
+        recipeId,
         title,
         summary,
         vegetarian,
@@ -56,15 +66,15 @@ const createRecipe = async (req, res) => {
         equipment
     } = req.body;
 
-    if (!title) {
-        return handleBadRequest(res, "Recipe title is required.");
+    if (!validateRecipeInput(req.body)) {
+        return handleBadRequest(res, "Please fill in all the recipe fields.");
     }
 
     try {
-        const [recipeId] = await knex('recipe')
+        const [newRecipeId] = await knex(table)
             .insert({
-                user_id,
-                recipe_id,
+                user_id: userId,
+                recipe_id: recipeId,
                 title,
                 summary,
                 vegetarian,
@@ -86,26 +96,47 @@ const createRecipe = async (req, res) => {
                 cuisines,
                 dish_types: dishTypes,
                 diets,
-                nutrients: nutrition.nutrients,
-                weight_per_serving: nutrition.weightPerServing,
+                nutrition: nutrition,
                 ingredients,
                 total_cost: totalCost,
                 equipment
             }, ['id']);
 
-        const newRecipe = await knex('recipe').where('id', recipeId.id);
+        const newRecipe = await knex(table).where('id', newRecipeId.id);
 
-        res.status(201).json(newRecipe);
+        const { created_at, updated_at, ...newRecipeData } = { ...newRecipe };
+        res.status(201).json(jcc.camelCaseKeys(Object.values(newRecipeData)));
     } catch (error) {
-        handleBadRequest(`Error creating recipe: ${error}`);
+        handleError(res, `Error adding recipe: ${error}`);
+    }
+};
+
+const updateRecipe = async (req, res) => {
+    const recipeId = req.params.id;
+    const table = req.params.table;
+
+    if (!validateRecipeInput(req.body)) {
+        return handleBadRequest(res, "Please fill in all required recipe fields.");
+    }
+
+    try {
+        const updatedRows = await knex(table).where('id', recipeId).update(req.body);
+        if (updatedRows === 0) {
+            return handleNotFound(res, `Service with ID ${recipeId} not found.`);
+        }
+        const updatedRecipe = await knex(table).where('id', recipeId).first();
+        res.status(200).json(updatedRecipe);
+    } catch (error) {
+        handleError(res, `Error updating recipe: ${error}`);
     }
 };
 
 const deleteRecipe = async (req, res) => {
     const recipeId = req.params.id;
+    const table = req.params.table;
 
     try {
-        const deletedRows = await knex('recipe').where('id', recipeId).del();
+        const deletedRows = await knex(table).where('id', recipeId).del();
         if (deletedRows === 0) {
             return handleNotFound(res, `Recipe with ID ${recipeId} not found.`);
         }
@@ -115,9 +146,22 @@ const deleteRecipe = async (req, res) => {
     }
 };
 
+const deleteAllRecipes = async (req, res) => {
+    const table = req.params.table;
+
+    try {
+        await knex(table).del();
+        res.status(204).send();
+    } catch (error) {
+        handleError(res, `Error deleting recipes: ${error}`);
+    }
+};
+
 module.exports = {
     getAllRecipes,
     getRecipeById,
     createRecipe,
-    deleteRecipe
+    updateRecipe,
+    deleteRecipe,
+    deleteAllRecipes
 };

@@ -18,10 +18,16 @@ const mealTypeRoutes = require("./routes/meal-type-routes");
 app.use("/api/mealtypes", mealTypeRoutes);
 
 const recipeRoutes = require("./routes/recipe-routes");
-app.use("/api/recipes", recipeRoutes);
+app.use("/api", recipeRoutes);
 
 const scaledRecipeRoutes = require("./routes/scaled-recipe-routes");
-app.use("/api/scaled-recipes", scaledRecipeRoutes);
+app.use("/api", scaledRecipeRoutes);
+
+const savedRecipeRoutes = require("./routes/saved-recipe-routes");
+app.use("/api", savedRecipeRoutes);
+
+const shoppingRoutes = require("./routes/shopping-routes");
+app.use("/api/shopping", shoppingRoutes);
 
 const userRoutes = require("./routes/user-routes");
 app.use("/api/users", userRoutes);
