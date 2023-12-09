@@ -20,11 +20,11 @@ router
     .delete(userController.deleteUser);
 
 router
-    .route('/current/saved-recipes')
+    .route('/current/saved_recipe')
     .get(userController.getUserSavedRecipes);
 
 router
-    .route('/current/scaled-recipes')
+    .route('/current/scaled_recipe')
     .get(userController.getUserScaledRecipes);
 
 router
@@ -32,7 +32,7 @@ router
     .get(userController.getUserShoppingList);
 
 router
-    .route('/current/recipes')
+    .route('/current/recipe')
     .get(userController.getUserRecipes);
 
 module.exports = router;

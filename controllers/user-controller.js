@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { handleError, handleNotFound, handleUserBadRequest, handleUnauthorized } = require("../utils/errorHandlers");
 
+
 const saltRounds = 10;
 
 const getAllUsers = async (_req, res) => {
@@ -19,12 +20,27 @@ const createUser = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-        return handleUserBadRequest(res, "Please enter the required fields.");
+        return handleUserBadRequest(res, "Please enter in all the required fields");
+    }
+
+    if (!email.includes("@")) {
+        return handleUserBadRequest(res, "Please enter a valid email address");
     }
 
     const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
     try {
+
+        const userEmailExists = await knex('user').where('email', email).first();
+        if (userEmailExists) {
+            return handleUserBadRequest(res, "An account with that email already exists");
+        }
+
+        const usernameExists = await knex('user').where('username', username).first();
+        if (usernameExists) {
+            return handleUserBadRequest(res, "That username has already been taken");
+        }
+
         const [userId] = await knex('user')
             .insert({
                 username,
@@ -34,6 +50,7 @@ const createUser = async (req, res) => {
 
         const newUser = await knex('user').where('id', userId.id).first();
         delete newUser.password;
+
         res.status(201).json(newUser);
     } catch (error) {
         handleUserBadRequest(res, `Failed registration: ${error}`);
@@ -80,7 +97,6 @@ const getCurrentUser = async (req, res) => {
 
     try {
         const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
         const user = await knex('user').where({ email: decoded.email }).first();
 
         if (!user) {
@@ -95,6 +111,27 @@ const getCurrentUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!email.includes("@")) {
+        return handleUserBadRequest(res, "Please enter a valid email address");
+    }
+
+    try {
+        const updatedRows = await knex('user')
+            .where('email', email)
+            .update({ username, email, password });
+        if (updatedRows === 0) {
+            return handleNotFound(res, `User with email: ${email} not found.`);
+        }
+
+        const updatedUser = await knex('user').where('email', email).first();
+        delete updatedUser.password;
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        handleError(res, `Error updating user information: ${error}`);
+    }
 
 };
 
@@ -129,7 +166,7 @@ const getUserSavedRecipes = async (req, res) => {
             return handleNotFound(res, `User not found.`);
         }
 
-        const savedRecipes = await knex('saved_recipe').where({ user_id: user.id }).first();
+        const savedRecipes = await knex('saved_recipe').where({ user_id: user.id });
 
         res.status(200).json(savedRecipes);
     } catch (error) {
@@ -151,7 +188,7 @@ const getUserScaledRecipes = async (req, res) => {
             return handleNotFound(res, `User not found.`);
         }
 
-        const scaledRecipes = await knex('scaled_recipe').where({ user_id: user.id }).first();
+        const scaledRecipes = await knex('scaled_recipe').where({ user_id: user.id });
 
         res.status(200).json(scaledRecipes);
     } catch (error) {
@@ -173,7 +210,7 @@ const getUserShoppingList = async (req, res) => {
             return handleNotFound(res, `User not found.`);
         }
 
-        const shoppingList = await knex('shopping').where({ user_id: user.id }).first();
+        const shoppingList = await knex('shopping').where({ user_id: user.id });
 
         res.status(200).json(shoppingList);
     } catch (error) {
