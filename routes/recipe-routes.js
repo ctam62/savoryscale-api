@@ -2,15 +2,15 @@ const router = require("express").Router();
 const recipeController = require("../controllers/recipe-controller");
 
 router
-    .route('/:table')
+    .route('/:userId/:table')
     .get(recipeController.getAllRecipes)
     .post(recipeController.createRecipe)
     .delete(recipeController.deleteAllRecipes);
 
 router
-    .route('/:id')
+    .route('/:userId/:table/:id')
     .get(recipeController.getRecipeById)
-    .put(recipeController.updateRecipe)
+    .patch(recipeController.updateRecipe)
     .delete(recipeController.deleteRecipe);
 
 module.exports = router;

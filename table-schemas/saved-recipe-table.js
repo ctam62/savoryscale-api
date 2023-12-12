@@ -1,7 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 
 module.exports = (table) => {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    table.increments('id').primary();
     table
         .integer('user_id')
         .unsigned()
@@ -23,7 +23,6 @@ module.exports = (table) => {
     table.string('image').notNullable();
     table.string('image_type').notNullable();
     table.integer('ready_in_minutes').notNullable();
-    table.integer('orig_servings').notNullable();
     table.integer('servings').notNullable();
     table.float('price_per_serving').notNullable();
     table.specificType('analyzed_instructions', 'jsonb ARRAY').notNullable();
@@ -31,9 +30,4 @@ module.exports = (table) => {
     table.specificType('dish_types', 'text ARRAY').notNullable();
     table.specificType('diets', 'text ARRAY').notNullable();
     table.jsonb('nutrition').notNullable();
-    table.specificType('ingredients', 'jsonb ARRAY').notNullable();
-    table.float('total_cost').notNullable();
-    table.specificType('equipment', 'jsonb ARRAY').notNullable();
-    table.timestamp('created_at').defaultTo(knex.fn.now());
-    table.timestamp('updated_at').defaultTo(knex.fn.now());
 };

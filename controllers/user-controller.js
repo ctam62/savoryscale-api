@@ -111,6 +111,9 @@ const getCurrentUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+
     const { username, email, password } = req.body;
 
     if (!email.includes("@")) {
@@ -118,14 +121,16 @@ const updateUser = async (req, res) => {
     }
 
     try {
+        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
         const updatedRows = await knex('user')
-            .where('email', email)
+            .where('email', decoded.email)
             .update({ username, email, password });
         if (updatedRows === 0) {
             return handleNotFound(res, `User with email: ${email} not found.`);
         }
 
-        const updatedUser = await knex('user').where('email', email).first();
+        const updatedUser = await knex('user').where('email', decoded.email).first();
         delete updatedUser.password;
 
         res.status(200).json(updatedUser);
@@ -141,7 +146,6 @@ const deleteUser = async (req, res) => {
 
     try {
         const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
         const deletedUser = await knex('user').where({ email: decoded.email }).del();
 
         if (deletedUser === 0) {
@@ -153,94 +157,6 @@ const deleteUser = async (req, res) => {
     }
 };
 
-const getUserSavedRecipes = async (req, res) => {
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
-        const user = await knex('user').where({ email: decoded.email }).first();
-
-        if (user === 0) {
-            return handleNotFound(res, `User not found.`);
-        }
-
-        const savedRecipes = await knex('saved_recipe').where({ user_id: user.id });
-
-        res.status(200).json(savedRecipes);
-    } catch (error) {
-        return handleError(res, `Error getting user saved recipes: ${error}`);
-    }
-
-};
-
-const getUserScaledRecipes = async (req, res) => {
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
-        const user = await knex('user').where({ email: decoded.email }).first();
-
-        if (user === 0) {
-            return handleNotFound(res, `User not found.`);
-        }
-
-        const scaledRecipes = await knex('scaled_recipe').where({ user_id: user.id });
-
-        res.status(200).json(scaledRecipes);
-    } catch (error) {
-        return handleError(res, `Error getting user scaled recipes: ${error}`);
-    }
-
-};
-
-const getUserShoppingList = async (req, res) => {
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
-        const user = await knex('user').where({ email: decoded.email }).first();
-
-        if (user === 0) {
-            return handleNotFound(res, `User not found.`);
-        }
-
-        const shoppingList = await knex('shopping').where({ user_id: user.id });
-
-        res.status(200).json(shoppingList);
-    } catch (error) {
-        return handleError(res, `Error getting user shopping lsit: ${error}`);
-    }
-
-};
-
-const getUserRecipes = async (req, res) => {
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
-        const user = await knex('user').where({ email: decoded.email }).first();
-
-        if (user === 0) {
-            return handleNotFound(res, `User not found.`);
-        }
-
-        const recipes = await knex('recipe').where({ user_id: user.id }).first();
-
-        res.status(200).json(recipes);
-    } catch (error) {
-        return handleError(res, `Error getting user recipes: ${error}`);
-    }
-};
-
-
 module.exports = {
     getAllUsers,
     createUser,
@@ -248,8 +164,4 @@ module.exports = {
     getCurrentUser,
     updateUser,
     deleteUser,
-    getUserSavedRecipes,
-    getUserScaledRecipes,
-    getUserShoppingList,
-    getUserRecipes
 };

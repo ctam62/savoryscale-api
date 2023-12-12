@@ -18,7 +18,7 @@ module.exports = {
       RETURN NEW;
     END;
     $$ language 'plpgsql';
-`,
+  `,
 
   onUpdateTrigger: table => `
     CREATE TRIGGER ${table}_updated_at

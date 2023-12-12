@@ -1,14 +1,7 @@
 const validateRecipeInput = (body) => {
-    return body.userId &&
-        body.recipeId &&
+    return body.recipeId &&
         body.title &&
         body.summary &&
-        body.vegetarian &&
-        body.vegan &&
-        body.glutenFree &&
-        body.dairyFree &&
-        body.veryHealthy &&
-        body.veryPopular &&
         body.creditsText &&
         body.sourceName &&
         body.sourceUrl &&
@@ -28,4 +21,36 @@ const validateRecipeInput = (body) => {
         body.equipment;
 };
 
-module.exports = { validateRecipeInput };
+const validateSavedRecipeInput = (body) => {
+    return body.recipeId &&
+        body.title &&
+        body.summary &&
+        body.creditsText &&
+        body.sourceName &&
+        body.sourceUrl &&
+        body.image &&
+        body.imageType &&
+        body.readyInMinutes &&
+        body.servings &&
+        body.pricePerServing &&
+        body.analyzedInstructions &&
+        body.cuisines &&
+        body.dishTypes &&
+        body.diets &&
+        body.nutrition
+};
+
+const validateShoppingInput = (body) => {
+    return body.userId &&
+        body.name &&
+        body.image &&
+        body.origPrice &&
+        body.price &&
+        body.amount;
+};
+
+module.exports = {
+    validateRecipeInput,
+    validateSavedRecipeInput,
+    validateShoppingInput
+};

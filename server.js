@@ -17,20 +17,20 @@ app.use(express.static("./public"));
 const mealTypeRoutes = require("./routes/meal-type-routes");
 app.use("/api/mealtypes", mealTypeRoutes);
 
-const recipeRoutes = require("./routes/recipe-routes");
-app.use("/api", recipeRoutes);
-
-const scaledRecipeRoutes = require("./routes/scaled-recipe-routes");
-app.use("/api", scaledRecipeRoutes);
-
-const savedRecipeRoutes = require("./routes/saved-recipe-routes");
-app.use("/api", savedRecipeRoutes);
-
-const shoppingRoutes = require("./routes/shopping-routes");
-app.use("/api/shopping", shoppingRoutes);
-
 const userRoutes = require("./routes/user-routes");
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
+
+const userRecipeRoutes = require("./routes/recipe-routes");
+app.use("/api/user", userRecipeRoutes);
+
+const userScaledRecipeRoutes = require("./routes/scaled-recipe-routes");
+app.use("/api/user", userScaledRecipeRoutes);
+
+const userSavedRecipeRoutes = require("./routes/saved-recipe-routes");
+app.use("/api/user", userSavedRecipeRoutes);
+
+const userShoppingRoutes = require("./routes/shopping-routes");
+app.use("/api/user", userShoppingRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
