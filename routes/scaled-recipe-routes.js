@@ -1,15 +1,16 @@
 const router = require("express").Router();
-const scaledRecipeController = require("../controllers/scaled-recipe-controller");
+const scaledRecipeController = require("../controllers/recipe-controller");
 
 router
-    .route('/')
-    .get(scaledRecipeController.getAllScaledRecipes)
-    .post(scaledRecipeController.createScaledRecipe)
+    .route('/:userId/:table')
+    .get(scaledRecipeController.getAllRecipes)
+    .post(scaledRecipeController.createRecipe)
     .delete(scaledRecipeController.deleteAllRecipes);
 
 router
-    .route('/:id')
-    .get(scaledRecipeController.getScaledRecipeById)
-    .delete(scaledRecipeController.deleteScaledRecipe);
+    .route('/:userId/:table/:id')
+    .get(scaledRecipeController.getRecipeById)
+    .patch(scaledRecipeController.updateRecipe)
+    .delete(scaledRecipeController.deleteRecipe);
 
 module.exports = router;
