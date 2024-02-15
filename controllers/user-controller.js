@@ -2,7 +2,8 @@ require("dotenv").config();
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { handleError, handleNotFound, handleUserBadRequest, handleUnauthorized } = require("../utils/errorHandlers");
+const jcc = require("json-case-convertor");
+const { handleError, handleUserNotFound, handleUserBadRequest, handleUnauthorized } = require("../utils/errorHandlers");
 
 
 const saltRounds = 10;
@@ -15,6 +16,32 @@ const getAllUsers = async (_req, res) => {
         handleError(error, res, `Error getting users: ${error}`);
     }
 };
+
+const checkUserByEmail = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return handleUserBadRequest(res, "Please enter an email");
+    }
+
+    if (!email.includes("@")) {
+        return handleUserBadRequest(res, "Please enter a valid email address");
+    }
+
+    try {
+        const user = await knex('user').where('email', email).first();
+        if (!user) {
+            return handleUserNotFound(res, `User with email ${email} does not exist.`);
+        }
+        const { created_at, updated_at, ...userData } = { ...user };
+        delete userData.password;
+
+        res.status(200).json(jcc.camelCaseKeys(userData));
+    } catch (error) {
+        handleError(res, `Error getting user: ${error}`);
+    }
+
+}
 
 const createUser = async (req, res) => {
     const { username, email, password } = req.body;
@@ -127,7 +154,7 @@ const updateUser = async (req, res) => {
             .where('email', decoded.email)
             .update({ username, email, password });
         if (updatedRows === 0) {
-            return handleNotFound(res, `User with email: ${email} not found.`);
+            return handleUserNotFound(res, `User with email: ${email} not found.`);
         }
 
         const updatedUser = await knex('user').where('email', decoded.email).first();
@@ -149,7 +176,7 @@ const deleteUser = async (req, res) => {
         const deletedUser = await knex('user').where({ email: decoded.email }).del();
 
         if (deletedUser === 0) {
-            return handleNotFound(res, `User not found.`);
+            return handleUserNotFound(res, `User not found.`);
         }
         res.status(204).send();
     } catch (error) {
@@ -159,6 +186,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     getAllUsers,
+    checkUserByEmail,
     createUser,
     loginUser,
     getCurrentUser,

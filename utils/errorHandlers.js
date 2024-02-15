@@ -6,6 +6,10 @@ const handleNotFound = (res, message) => {
     return res.status(404).json({ message: message });
 };
 
+const handleUserNotFound = (res, message) => {
+    return res.status(404).send(message);
+};
+
 const handleBadRequest = (res, message) => {
     return res.status(400).json({ error: message });
 };
@@ -23,5 +27,6 @@ module.exports = {
     handleNotFound,
     handleBadRequest,
     handleUserBadRequest,
+    handleUserNotFound,
     handleUnauthorized
 };
