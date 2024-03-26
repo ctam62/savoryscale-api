@@ -21,16 +21,16 @@ const userRoutes = require("./routes/user-routes");
 app.use("/api/user", userRoutes);
 
 const userRecipeRoutes = require("./routes/recipe-routes");
-app.use("/api/user", userRecipeRoutes);
+app.use("/api/recipe/user", userRecipeRoutes);
 
 const userScaledRecipeRoutes = require("./routes/scaled-recipe-routes");
-app.use("/api/user", userScaledRecipeRoutes);
+app.use("/api/recipe/user", userScaledRecipeRoutes);
 
 const userSavedRecipeRoutes = require("./routes/saved-recipe-routes");
-app.use("/api/user", userSavedRecipeRoutes);
+app.use("/api/recipe/user", userSavedRecipeRoutes);
 
 const userShoppingRoutes = require("./routes/shopping-routes");
-app.use("/api/user", userShoppingRoutes);
+app.use("/api/shopping/user/", userShoppingRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
