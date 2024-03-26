@@ -32,14 +32,13 @@ const getItemById = async (req, res) => {
 };
 
 const createItem = async (req, res) => {
-    const userId = req.params.userId;
-
     const {
         name,
         image,
         origPrice,
         price,
-        amount
+        amount,
+        userId
     } = req.body;
 
     if (!validateShoppingInput(req.body)) {
