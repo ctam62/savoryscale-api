@@ -13,6 +13,10 @@ Install nodeJS dependencies
 ```
 npm i
 ```
+Generate a JWT Key and add to a .env file
+```
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'));"
+```
 
 Create and select the savoryscale database in a separate psql terminal
 ```
