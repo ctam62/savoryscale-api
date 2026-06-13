@@ -29,10 +29,10 @@
   "homepage": "https://github.com/ctam62/savoryscale-api#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.5",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.22.1",
+    "express": "^4.22.2",
     "json-case-convertor": "^1.4.4",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.0.1",
